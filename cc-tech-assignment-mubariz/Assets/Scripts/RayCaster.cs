@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class RayCaster : MonoBehaviour
 {
@@ -10,6 +11,14 @@ public class RayCaster : MonoBehaviour
     [SerializeField] private float raycastDistance = 3f;
     [SerializeField] private LayerMask interactableLayer;
 
+    public class OnRayCastObjectClass : EventArgs
+    {
+        public GameObject gb;
+    }
+
+    public static event EventHandler<OnRayCastObjectClass> OnRayCastObject;
+    public static event EventHandler<OnRayCastObjectClass> OnNotRayCastingObject;
+
     private void Update()
     {
         HandleInteractionRaycast();
@@ -19,16 +28,21 @@ public class RayCaster : MonoBehaviour
     {
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
         RaycastHit hit;
-        Debug.DrawLine(ray.origin, cameraTransform.forward, Color.green,10000);
+
+        // Draw the ray in the Scene view
+        Debug.DrawRay(ray.origin, ray.direction * raycastDistance, Color.red);
+
         if (Physics.Raycast(ray, out hit, raycastDistance, interactableLayer))
         {
             OnShowInteractUI?.Invoke(true);
-            Debug.DrawLine(ray.origin, hit.point, Color.green, 0.1f);
-            Debug.Log("interactable found");
+            OnRayCastObject?.Invoke(this,new OnRayCastObjectClass { gb = hit.transform.gameObject });
         }
         else
         {
             OnShowInteractUI?.Invoke(false);
+            OnRayCastObject?.Invoke(this, new OnRayCastObjectClass { gb = null });
+
         }
     }
+
 }
