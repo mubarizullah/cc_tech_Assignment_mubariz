@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class InteractableMover : MonoBehaviour
     [SerializeField] private Transform targetTransform; 
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float durationForObjMove = 1f;
+    public static event Action OnObjectGathered;
 
     GameObject currentInteractable;
 
@@ -45,15 +47,17 @@ public class InteractableMover : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / duration;
 
-            // Smooth movement
+            //movement and rotation through lerp
             objectToMove.position = Vector3.Lerp(startPosition, target.position, t);
             objectToMove.rotation = Quaternion.Slerp(startRotation, target.rotation, t);
 
             yield return null;
         }
 
-        // Ensure final position & rotation match exactly
         objectToMove.position = target.position;
         objectToMove.rotation = target.rotation;
+
+        //Object has arrived at destination
+        OnObjectGathered?.Invoke();
     }
 }
