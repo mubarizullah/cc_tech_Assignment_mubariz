@@ -1,78 +1,26 @@
+using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-
+using UnityEngine.UI;
 public class UIHandler : MonoBehaviour
 {
-    [SerializeField] GameObject settingPanel;
-    [SerializeField] GameObject musicOnButton;
-    [SerializeField] GameObject musicOffButton;
-    [SerializeField] GameObject musicManagerGO;
-    [SerializeField] GameObject pausePanel;
-    bool musicPlaying = false;
-    public void SettingButton()
+    [Header("UI Elements")]
+    [SerializeField] private Image interactImage;
+
+    private void OnEnable()
     {
-        settingPanel.SetActive(true);
-        Time.timeScale = 0f;
+        RayCaster.OnShowInteractUI += HandleInteractUI;
     }
 
-    public void SettingPenelBack()
+    private void OnDisable()
     {
-        settingPanel.SetActive(false);
-        Time.timeScale = 1f;
-    }
-    public void PausePenelBack()
-    {
-        pausePanel.SetActive(false);
-        Time.timeScale = 1f;
+        RayCaster.OnShowInteractUI -= HandleInteractUI;
     }
 
-    private void Start()
+    private void HandleInteractUI(bool isActive)
     {
-        musicOffButton.SetActive(false);
-        musicOffButton.SetActive(false);
-
-        if (!musicPlaying)
+        if (interactImage != null)
         {
-            musicOnButton.SetActive(true);
-            musicManagerGO.GetComponentInParent<AudioSource>().Play();
-            musicPlaying = true;
-        }
-
-    }
-    public void MusicButton()
-    {
-        if (!musicPlaying)
-        {
-            musicOnButton.SetActive(true);
-            musicOffButton.SetActive(false);
-            musicManagerGO.GetComponentInParent<AudioSource>().Play();
-            musicPlaying = true;
-        }
-        else
-        {
-            musicOffButton.SetActive(true);
-            musicOnButton.SetActive(false);
-            musicManagerGO.GetComponentInParent<AudioSource>().Pause();
-            musicPlaying = false;
+            interactImage.gameObject.SetActive(isActive);
         }
     }
-
-    public void PauseButton()
-    {
-        pausePanel.SetActive(true);
-        //Time.timeScale = 0f;
-    }
-
-    public void ToMainMenuButton()
-    {
-        SceneManager.LoadScene("MainMenu");
-    }
-    public void ResumeButton()
-    {
-        pausePanel.SetActive(false);
-        Time.timeScale = 1f;
-    }
-
-    
-
 }

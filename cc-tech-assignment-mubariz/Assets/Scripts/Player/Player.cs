@@ -1,22 +1,11 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem.EnhancedTouch;
-using Touch = UnityEngine.Touch;
 
 
 [RequireComponent(typeof(CharacterController))]
 public class Player : MonoBehaviour
 {
     public static Player Instance { get; private set; }
-
-    public event Action OnPhysicalInteraction;
-
-    public static event EventHandler<OnIntractEventArgs> OnIntract;
-
-    public class OnIntractEventArgs : EventArgs
-    {
-        public bool intracting;
-    }
 
     [Header("Essentials")]
 
