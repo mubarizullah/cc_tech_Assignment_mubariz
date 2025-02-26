@@ -41,19 +41,17 @@ public class Player : MonoBehaviour
     [Header("Prefrences")]
     [SerializeField] float playerSpeed = 5f;
 
-    
+    [SerializeField] float jumpForce = 8f;
 
-    [SerializeField] float gravity = -1f;
+    [SerializeField] float gravity = -9.18f;
     
     [Tooltip("How far a player can interact with Objects.")]
     [SerializeField] float distanceOfRaycast = 1.6f;
-    
-    [Tooltip("The layer of gameobjects with which player can interact.")]
-    [SerializeField] LayerMask interactLayer;
+
+    private Vector3 velocity;
+    private bool isGrounded;
 
     public bool canMove;
-    public static bool inHome;
-
     private void Start()
     {
         canMove = true;
@@ -69,27 +67,44 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-
+        GroundCheck();
         if (canMove)
         {
             Movement();
+            HandleJump();
         }
     }
 
-    
+    private void GroundCheck()
+    {
+        float groundCheckRadius = 0.25f;
+        isGrounded = Physics.CheckSphere(groundCheck.transform.position, groundCheckRadius, groundLayer);
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f; // Small downward force to keep grounded check stable
+        }
+    }
 
     public void Movement()
     {
-        float groundCheckRadius = 0.25f;
-        bool isGrounded = Physics.CheckSphere(groundCheck.transform.position, groundCheckRadius, groundLayer);  //ground check
-
         Vector2 movInXandZ = gameInput.GetNormalizedMovementInXandZ();
+        Vector3 movement = transform.right * movInXandZ.x + transform.forward * movInXandZ.y;
+        movement *= playerSpeed;
+        movement.y = velocity.y;
+        characterController.Move(movement * Time.deltaTime);
+    }
 
-        Vector3 movement = transform.right * movInXandZ.x + transform.forward * movInXandZ.y;    // transform.right and transform.forward are the directions according to the player direction, not of world
 
-        movement.y = isGrounded ? 0f : gravity;
+    private void HandleJump()
+    {
+        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Code working");
+            velocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);
+        }
 
-        characterController.Move(playerSpeed * Time.deltaTime * movement);
+        velocity.y += gravity * Time.deltaTime;
+        characterController.Move(velocity * Time.deltaTime);
     }
 
     public Vector3 GetGrabPosition()
