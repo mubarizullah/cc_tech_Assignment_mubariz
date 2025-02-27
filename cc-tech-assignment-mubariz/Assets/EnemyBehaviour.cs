@@ -8,7 +8,7 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private float detectionRadius = 10f;
     [SerializeField] private float exitRadius = 15f;
-    [SerializeField] private float attackRange = 2f; // Increased for better accuracy
+    [SerializeField] private float attackRange = 2f;
     [SerializeField] private float attackCooldown = 3f;
     [SerializeField] private GameObject wanderingBehavior;
 
@@ -21,7 +21,7 @@ public class EnemyBehaviour : MonoBehaviour
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        agent.stoppingDistance = attackRange; // Ensure enemy stops at attack range
+        agent.stoppingDistance = attackRange;
     }
 
     private void Update()
@@ -39,7 +39,7 @@ public class EnemyBehaviour : MonoBehaviour
 
         if (isChasing)
         {
-            if (distanceToPlayer > attackRange + 0.5f) // Added buffer to avoid jittering
+            if (distanceToPlayer > attackRange + 0.5f)
             {
                 ResumeChasing();
             }
@@ -54,15 +54,15 @@ public class EnemyBehaviour : MonoBehaviour
     {
         isChasing = true;
         wanderingBehavior.SetActive(false);
-        ResumeChasing(); // Ensure the agent starts moving
+        ResumeChasing(); 
     }
 
-    private void StopChasing()
+    public void StopChasing()
     {
         isChasing = false;
         isAttacking = false;
         wanderingBehavior.SetActive(true);
-        StopAllCoroutines(); // Stop attacking
+        StopAllCoroutines(); 
     }
 
     private void ResumeChasing()

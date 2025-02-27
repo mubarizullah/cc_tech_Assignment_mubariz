@@ -1,82 +1,70 @@
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("UI Elements")]
-    [SerializeField] private TextMeshProUGUI countdownText;
-    [SerializeField] private GameObject gameOverUI;
-    [SerializeField] UIHandler uiHandler;
-    [SerializeField] Player player;
+    public int startTime = 60; 
+    private int currentTime;
+    private Coroutine timerCoroutine; 
 
-    [Header("Timer Settings")]
-    [SerializeField] private float countdownTime = 60f;
-    private bool isTimerActive = false;
+    [SerializeField ]Text timerText; 
+    [SerializeField] GameObject gameOverPanel; 
+    [SerializeField] EnemyBehaviour enemyBehaviour;
 
     private void Start()
     {
-        gameOverUI.SetActive(false);
-        UpdateTimerUI();
+        RestartGame(); 
     }
 
-    private void Update()
+    private IEnumerator TimerRoutine()
     {
-        
-        if (isTimerActive && countdownTime > 0)
+        while (currentTime > 0)
         {
-            countdownTime -= Time.deltaTime; 
-            countdownTime = Mathf.Clamp(countdownTime, 0, 60); 
+            yield return new WaitForSeconds(1f);
+            currentTime--;
             UpdateTimerUI();
         }
 
-        if (countdownTime <= 0)
-        {
-            TimerEnd();
-        }
-    }
-
-    public void StartCountdown()
-    {
-        if (!isTimerActive)
-        {
-            countdownTime = 60f; 
-            isTimerActive = true;
-            Time.timeScale = 1; 
-        }
-    }
-
-
-    private IEnumerator TimerCoroutine()
-    {
-        while (countdownTime > 0)
-        {
-            yield return new WaitForSeconds(1f);
-        }
-        TimerEnd();
+        GameOver();
     }
 
     private void UpdateTimerUI()
     {
-        if (countdownText != null)
+        if (timerText != null)
         {
-            countdownText.text = Mathf.CeilToInt(countdownTime).ToString(); 
+            timerText.text = currentTime.ToString(); 
         }
     }
 
-    private void TimerEnd()
+    private void GameOver()
     {
-        isTimerActive = false;
-        gameOverUI.SetActive(true);
-        Time.timeScale = 0; 
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+            Time.timeScale = 0f;
+        }
     }
 
-    public void ResetTimer()
+
+    public void Pause()
     {
-        countdownTime = 60f;
-        isTimerActive = false;
-        gameOverUI.SetActive(false);
-        Time.timeScale = 1;
-        UpdateTimerUI();
+        gameOverPanel.SetActive(true);
+        Time.timeScale = 0f;
+    }
+    // Public function to restart the timer
+    public void RestartGame()
+    {
+        if (timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine);
+        }
+
+        currentTime = startTime;
+        UpdateTimerUI(); 
+        gameOverPanel?.SetActive(false);
+        enemyBehaviour.StopChasing();
+        timerCoroutine = StartCoroutine(TimerRoutine());
+        Time.timeScale = 1f;
     }
 }
