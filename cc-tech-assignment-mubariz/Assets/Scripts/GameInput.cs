@@ -46,7 +46,6 @@ public class GameInput : MonoBehaviour
     private void Update()
     {
         moveVector = gameInputActions.Player.Movement.ReadValue<Vector2>();
-        Debug.Log(moveVector);
     }
 
     public Vector2 GetNormalizedMovementInXandZ()

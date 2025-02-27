@@ -12,7 +12,7 @@ public class Wandering : MonoBehaviour
 
     private void Start()
     {
-        agent = enemyRoot.GetComponent<NavMeshAgent>(); // Get NavMeshAgent from parent
+        agent = enemyRoot.GetComponentInParent<NavMeshAgent>(); // Get NavMeshAgent from parent
         timer = wanderTimer;
     }
 
