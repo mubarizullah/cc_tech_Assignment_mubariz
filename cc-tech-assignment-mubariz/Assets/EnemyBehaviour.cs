@@ -83,14 +83,9 @@ public class EnemyBehaviour : MonoBehaviour
     {
         while (isAttacking)
         {
-            Debug.Log("Attacking Player!"); // Check if attack starts
+            Debug.Log("Attacked Player");
+            OnPlayerGetsDamage?.Invoke();
             yield return new WaitForSeconds(attackCooldown);
-
-            if (OnPlayerGetsDamage != null)
-            {
-                OnPlayerGetsDamage.Invoke(); // Call event for player damage
-                Debug.Log("Player health should decrease"); // Ensure event is fired
-            }
 
             // If player moved away during attack, resume chasing
             if (Vector3.Distance(transform.position, player.position) > attackRange + 0.5f)
