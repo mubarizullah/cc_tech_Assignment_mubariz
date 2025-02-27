@@ -13,10 +13,16 @@ public class UIHandler : MonoBehaviour
     private int itemCount;
     private void Start()
     {
+        Interactable.OnObjectGathered += Interactable_OnObjectGathered;
         playerHealth = 80f;
         UpdateHealthUI();
-        itemCount = 0;
-        InteractableMover.OnObjectGathered += InteractableMover_OnObjectGathered;
+        itemCount = 0;        
+    }
+
+    private void Interactable_OnObjectGathered()
+    {
+        itemCount++;
+        UpdateItemCount_UI();
     }
 
     public void UpdateHealth(float damage)
@@ -31,12 +37,6 @@ public class UIHandler : MonoBehaviour
         {
             healthImage.fillAmount = playerHealth / 100f; // Normalize to 0 - 1 range
         }
-    }
-
-    private void InteractableMover_OnObjectGathered()
-    {
-        itemCount++;
-        UpdateItemCount_UI();
     }
     private void UpdateItemCount_UI()
     {
@@ -58,6 +58,11 @@ public class UIHandler : MonoBehaviour
         {
             interactImage.gameObject.SetActive(isActive);
         }
+    }
+
+    public void Exit()
+    {
+        Application.Quit();
     }
 
 

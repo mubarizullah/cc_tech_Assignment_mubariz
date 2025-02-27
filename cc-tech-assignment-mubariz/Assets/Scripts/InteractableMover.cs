@@ -5,10 +5,9 @@ using UnityEngine;
 public class InteractableMover : MonoBehaviour
 {
     [SerializeField] private Transform targetTransform; 
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float durationForObjMove = 1f;
+    [SerializeField] private float durationForObjMove = 0.1f;
     [SerializeField] GameInput gameInput;
-    public static event Action OnObjectGathered;
+    GameObject lastGameobject;
 
     GameObject currentInteractable;
     bool isMoving;
@@ -21,13 +20,11 @@ public class InteractableMover : MonoBehaviour
 
     private void RayCaster_OnNotRayCastingObject(object sender, RayCaster.OnRayCastObjectClass e)
     {
-        if (!isMoving)
             currentInteractable = e.gb;
     }
 
     private void RayCaster_OnRayCastObject(object sender, RayCaster.OnRayCastObjectClass e)
     {
-        if (!isMoving)
             currentInteractable = e.gb;
     }
 
@@ -35,6 +32,7 @@ public class InteractableMover : MonoBehaviour
     {        
         if (currentInteractable != null && gameInput.InteractButtonPressed()) 
         {
+            lastGameobject = currentInteractable;
             Debug.Log("Object found and button pressed");            
             StartCoroutine(MoveObjectToTarget(currentInteractable.transform, targetTransform));
         }
@@ -63,12 +61,10 @@ public class InteractableMover : MonoBehaviour
         objectToMove.position = target.position;
         objectToMove.rotation = target.rotation;
 
-        // Ensure event is triggered only once when movement completes
-        if (currentInteractable != null)
-        {
-            OnObjectGathered?.Invoke();
-            currentInteractable.SetActive(false);
-            currentInteractable = null; // Prevent multiple interactions
-        }
+
+            lastGameobject?.SetActive(false);
+            currentInteractable = null;
+        lastGameobject = null;
+        
     }
 }

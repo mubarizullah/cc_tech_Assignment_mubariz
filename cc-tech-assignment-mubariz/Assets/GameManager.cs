@@ -16,17 +16,13 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        gameOverUI.SetActive(false); 
+        gameOverUI.SetActive(false);
+        UpdateTimerUI();
     }
 
     private void Update()
     {
-        if (player.PlayerHealth <= 0)
-        {
-            TimerEnd();
-        }
-
-
+        
         if (isTimerActive && countdownTime > 0)
         {
             countdownTime -= Time.deltaTime; 
@@ -44,9 +40,9 @@ public class GameManager : MonoBehaviour
     {
         if (!isTimerActive)
         {
-            uiHandler.playerHealth = 90f;
+            countdownTime = 60f; 
             isTimerActive = true;
-            StartCoroutine(TimerCoroutine());
+            Time.timeScale = 1; 
         }
     }
 
@@ -71,7 +67,7 @@ public class GameManager : MonoBehaviour
     private void TimerEnd()
     {
         isTimerActive = false;
-        gameOverUI.SetActive(true); 
+        gameOverUI.SetActive(true);
         Time.timeScale = 0; 
     }
 
@@ -80,6 +76,7 @@ public class GameManager : MonoBehaviour
         countdownTime = 60f;
         isTimerActive = false;
         gameOverUI.SetActive(false);
-        Time.timeScale = 1; 
+        Time.timeScale = 1;
+        UpdateTimerUI();
     }
 }
