@@ -8,21 +8,15 @@ public class UIHandler : MonoBehaviour
     [SerializeField] private Image interactImage;
     [SerializeField] TextMeshProUGUI itemCountText;
     [SerializeField] Image healthImage;
-    float playerHealth;
+    public float playerHealth;
 
     private int itemCount;
     private void Start()
     {
-        EnemyBehaviour.OnPlayerGetsDamage += EnemyBehaviour_OnPlayerGetsDamage;
         playerHealth = 80f;
         UpdateHealthUI();
         itemCount = 0;
         InteractableMover.OnObjectGathered += InteractableMover_OnObjectGathered;
-    }
-
-    private void EnemyBehaviour_OnPlayerGetsDamage()
-    {
-        UpdateHealth(5f);
     }
 
     public void UpdateHealth(float damage)

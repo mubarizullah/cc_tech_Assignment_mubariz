@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
     [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI countdownText;
     [SerializeField] private GameObject gameOverUI;
+    [SerializeField] UIHandler uiHandler;
+    [SerializeField] Player player;
 
     [Header("Timer Settings")]
     [SerializeField] private float countdownTime = 60f;
@@ -14,12 +16,17 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        isTimerActive = true;
         gameOverUI.SetActive(false); 
     }
 
     private void Update()
     {
+        if (player.PlayerHealth <= 0)
+        {
+            TimerEnd();
+        }
+
+
         if (isTimerActive && countdownTime > 0)
         {
             countdownTime -= Time.deltaTime; 
@@ -37,10 +44,12 @@ public class GameManager : MonoBehaviour
     {
         if (!isTimerActive)
         {
+            uiHandler.playerHealth = 90f;
             isTimerActive = true;
             StartCoroutine(TimerCoroutine());
         }
     }
+
 
     private IEnumerator TimerCoroutine()
     {
